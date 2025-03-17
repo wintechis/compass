@@ -1,0 +1,168 @@
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an assistant designed to generate a query that can be used to answer a User question.\nAs expert in ontologies and graph data, you will interact with a knowledge graph in a strict think-act-observe cycle.\n\nProcess\n\n1. Think: Analyse the current situation including the question from User and information gathered so far. Formulate a strategy to come up with a query.\n2. Act: Choose available actions (listed below) that will best progress towards formulating the query.\n3. Observe: HALT. Sys will provide the result of your chosen actions in the next cycle.\n\nIn your response, start with a `Think:` section followed by an `Act:` section.\nRepeat the Think-Act-Observe cycle until you have evaluated the correct query, then end the interaction with `success()`.\n\nAvailable Actions\n\nOnce User asks a question, iteratively build the query. Issue one or multiple of the following actions.\n\n* `search(keywords: string)`: Get URIs to resources matching the given `keywords`. Look for URIs that identify entities, i.e., make two calls: search('foo') and search('bar') instead of search('foo bar').\n* `deref(resource URI: string)`: Get all triples with `resource URI` in subject position. `deref()` can only handle full URIs (e.g., `deref('http://example.org/foo#bar')`), not compact URIs (e.g., `foo:bar`).\n* `query(sparql: string)`: Evaluate `sparql` and get solutions.\n\nYou may run the above actions concurrently using `|`, e.g., `search('foo') | search('bar')`.\n\nOnce you have found the final query, check the query via `query()` and then end.\n\n* `success(text: string)`: Yay! Confirm the query as final and optionally give User a concise message explaining the relevant steps you took. Do not mention the query or the query solutions.\n\nIf nearing the limit:\n\n* `fail(text: string)`: You have no other choice than to give up and optionally report to the User the relevant steps and why they failed.\n\nFormat action calls as follows: `Act: describe('http://foo/bar')` or `Act: query('PREFIX : <#> SELECT DISTINCT ?x WHERE { }')`.\nUse quotes for arguments.\n\n Guidelines\n- You have exaclty 10 cycles to find the correct query. Follow always the following rules:\n- (1 Cycle) First cycle: search() to find key resources.\n- (2 Cycle) Second cycle: deref() to confirm your assumptions about the graph structure.\n- (3-9 Cycle) Other cycles: You are only allowed to do the following actions based on the actions before:\n| Previous Action/Next Allowed Action  |   search |   deref |   query |   success | fail |\n|:--------|---------:|--------:|--------:|----------:|-----:|\n| search  |   Yes |   Yes |    No |        No |   No |\n| deref   |    Yes |   Yes |   Yes |      No |   No |\n| query   |     No |    Yes |   Yes |     Yes |   Yes |\n| success |       No |   No    |      No |     Yes |   No |\n| fail    |       No |   No    |      No |     No |   Yes |\n\n- (10 Cycle) Last cycle: You need to end the process with either success() or fail()."
+        },
+        {
+            "role": "system",
+            "content": "System has access to ['/home/dorschre/01_Projects/test/natural-language-query-answering/knowledge-graph/velektronik-graph-clean/abox-en.ttl.gz', '/home/dorschre/01_Projects/test/natural-language-query-answering/knowledge-graph/velektronik-graph-clean/tbox.ttl'] with 33755 triples. System version v0.2.9 is using llama-3.3-70b-instruct at chat-ai.academiccloud.de."
+        },
+        {
+            "role": "user",
+            "content": "Operating income of companies in 2021"
+        },
+        {
+            "role": "assistant",
+            "content": "Think: The user is asking for the operating income of companies in 2021. To formulate a query, we need to identify the key resources related to \"operating income\", \"companies\", and \"2021\". We can start by searching for these keywords to find relevant URIs.\n\nAct: search('operating income') | search('companies') | search('2021')",
+            "actions": [
+                {
+                    "name": "search",
+                    "argument": "operating income"
+                },
+                {
+                    "name": "search",
+                    "argument": "companies"
+                },
+                {
+                    "name": "search",
+                    "argument": "2021"
+                }
+            ]
+        },
+        {
+            "role": "tool",
+            "content": "The keyword search for `operating income` returned the following ranked list with hits.\n\n    https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#operatingIncome **operating income** 1.0000\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ237683.ttl#this **Ome** 0.4216\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ695.ttl#this **OpenFive** 0.2981\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ274.ttl#this **Ampere Computing** 0.2778\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/site/weQ559.ttl#this **Semiconductor Manufacturing International Corporation Beijing Fab** 0.2417"
+        },
+        {
+            "role": "tool",
+            "content": "The keyword search for `companies` returned the following ranked list with hits.\n\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ1438.ttl#this **Campania** 0.4000\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ579807.ttl#this **Crolles** 0.3162\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ109204.ttl#this **Comal County** 0.3162\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this **Active Business Company** 0.3162\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ208812.ttl#this **Corbeil-Essonnes** 0.2981"
+        },
+        {
+            "role": "tool",
+            "content": "The keyword search for `2021` returned the following ranked list with hits.\n\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/person/wdQ7143480.ttl#conf-hotchips-Gelsinger22 **Semiconductors Run the World : Hot Chips 2022.** 0.1667\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ23048142.ttl#this **Carmelray Industrial Park 1** 0.1072\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ2280.ttl#this **Minsk** 0.0000\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ1725421.ttl#this **canton of Grenoble-5** 0.0000\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ1204681.ttl#this **Ohira** 0.0000"
+        },
+        {
+            "role": "assistant",
+            "content": "Think: Based on the search results, we have found relevant URIs for \"operating income\", \"companies\", and \"2021\". The next step is to confirm our assumptions about the graph structure by dereferencing the URIs.\n\nAct: deref('https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#operatingIncome') | deref('https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this') | deref('https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ23048142.ttl#this')",
+            "actions": [
+                {
+                    "name": "deref",
+                    "argument": "https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#operatingIncome"
+                },
+                {
+                    "name": "deref",
+                    "argument": "https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this"
+                },
+                {
+                    "name": "deref",
+                    "argument": "https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ23048142.ttl#this"
+                }
+            ]
+        },
+        {
+            "role": "tool",
+            "content": "The description of `https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#operatingIncome` is as follows.\n\n    @prefix owl: <http://www.w3.org/2002/07/owl#> .\n    @prefix qb: <http://purl.org/linked-data/cube#> .\n    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n    @prefix tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> .\n    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n    \n    tbox:operatingIncome a qb:MeasureProperty,\n            owl:DatatypeProperty ;\n        rdfs:label \"operating income\"@en ;\n        rdfs:domain qb:Observation ;\n        rdfs:range xsd:decimal ."
+        },
+        {
+            "role": "tool",
+            "content": "The description of `https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this` is as follows.\n\n    @prefix ns1: <https://www.w3.org/ns/org#> .\n    @prefix owl: <http://www.w3.org/2002/07/owl#> .\n    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n    @prefix tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> .\n    \n    <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this> a ns1:Organization ;\n        rdfs:label \"Active Business Company\"@en ;\n        owl:sameAs <http://www.wikidata.org/entity/Q124743799>,\n            <https://welektronik.iis.fraunhofer.de/entity/Q1104> ;\n        tbox:organizationType <https://welektronik.iis.fraunhofer.de/entity/Q1060> ;\n        ns1:hasRegisteredSite <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#headquarter> ."
+        },
+        {
+            "role": "tool",
+            "content": "The description of `https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ23048142.ttl#this` is as follows.\n\n    @prefix ns1: <http://www.geonames.org/ontology#> .\n    @prefix ns2: <http://www.w3.org/2003/01/geo/wgs84_pos#> .\n    @prefix owl: <http://www.w3.org/2002/07/owl#> .\n    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n    \n    <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/site/weQ482.ttl#this> ns1:parentFeature <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ23048142.ttl#this> .\n    \n    <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ23048142.ttl#this> a ns1:Feature ;\n        rdfs:label \"Carmelray Industrial Park 1\"@en ;\n        ns1:featureClass ns1:P ;\n        ns1:parentCountry <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ928.ttl#this> ;\n        ns1:parentFeature <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ5032522.ttl#this>,\n            <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/region/wdQ75978.ttl#this> ;\n        owl:sameAs <http://www.wikidata.org/entity/Q23048142> ;\n        ns2:lat 14.19194444 ;\n        ns2:long 121.07111111 ."
+        },
+        {
+            "role": "assistant",
+            "content": "Think: Based on the dereferenced URIs, we have confirmed our assumptions about the graph structure. The next step is to formulate a SPARQL query to retrieve the operating income of companies in 2021.\n\nAct: query('PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (?company = <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this>) }')",
+            "actions": [
+                {
+                    "name": "query",
+                    "argument": "PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (?company = <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this>) }"
+                }
+            ]
+        },
+        {
+            "role": "tool",
+            "content": "No results for `query('PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (?company = <https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1104.ttl#this>) }')`."
+        },
+        {
+            "role": "assistant",
+            "content": "Think: The query did not return any results. This could be due to the filter condition in the query. We need to modify the query to retrieve the operating income of all companies in 2021.\n\nAct: query('PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . }')",
+            "actions": [
+                {
+                    "name": "query",
+                    "argument": "PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . }"
+                }
+            ]
+        },
+        {
+            "role": "tool",
+            "content": "The query 'PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . }' returned the following solution (first 20 results).\n    company,operatingIncome\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2008,-281243000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2009,425410000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2010,804285000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2011,237733000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2013,118071000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2014,788039000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2015,1074256000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2016,1902132000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2017,3213299000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2019,2464732000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2020,4482023000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2021,5381822000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2022,5174860000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome1999,17100000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2000,32900000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2001,54200000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2002,21100000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2003,-28900000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2004,8100000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2005,-52700000.0"
+        },
+        {
+            "role": "assistant",
+            "content": "Think: The query returned a list of companies with their operating income. However, the results include operating income for different years, not just 2021. We need to modify the query to filter the results for 2021.\n\nAct: query('PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (regex(str(?company), \"2021\")) }')",
+            "actions": [
+                {
+                    "name": "query",
+                    "argument": "PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (regex(str(?company), \"2021\")) }"
+                }
+            ]
+        },
+        {
+            "role": "tool",
+            "content": "The query 'PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (regex(str(?company), \"2021\")) }' returned the following solution (first 20 results).\n    company,operatingIncome\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1030.ttl#operatingincome2021,5381822000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ1036.ttl#operatingincome2021,98980000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ17.ttl#operatingincome2021,3648000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ20.ttl#operatingincome2021,649980897000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ21.ttl#operatingincome2021,10041000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ22.ttl#operatingincome2021,19456000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ23.ttl#operatingincome2021,9789000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ245.ttl#operatingincome2021,89678000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ25.ttl#operatingincome2021,8960000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ26.ttl#operatingincome2021,6283000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ27.ttl#operatingincome2021,1692201000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ28.ttl#operatingincome2021,2583000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ31.ttl#operatingincome2021,2419000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ32.ttl#operatingincome2021,1612700000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ35.ttl#operatingincome2021,108949000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ36.ttl#operatingincome2021,53351827000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ37.ttl#operatingincome2021,-59812000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ58.ttl#operatingincome2021,4837000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ668.ttl#operatingincome2021,1347000000.0\n    https://solid.iis.fraunhofer.de/oe-40200/2024/10/velektronik-graph-clean/company/weQ675.ttl#operatingincome2021,6889000000.0"
+        },
+        {
+            "role": "assistant",
+            "content": "Think: The query returned a list of companies with their operating income in 2021. We have successfully formulated a query to answer the user's question.\n\nAct: success('The operating income of companies in 2021 can be retrieved using the formulated SPARQL query.')",
+            "actions": [
+                {
+                    "name": "success",
+                    "argument": "The operating income of companies in 2021 can be retrieved using the formulated SPARQL query."
+                }
+            ]
+        }
+    ],
+    "summary": {
+        "loop": {
+            "id": "67d2255a",
+            "question": "Operating income of companies in 2021",
+            "iterations": 6,
+            "state": "SUCCESS",
+            "sparql": "PREFIX qb: <http://purl.org/linked-data/cube#> PREFIX tbox: <https://github.com/wintechis/natural-language-query-answering/tree/main/knowledge-graph/velektronik-graph-clean/tbox.ttl#> SELECT ?company ?operatingIncome WHERE { ?company a qb:Observation . ?company tbox:operatingIncome ?operatingIncome . FILTER (regex(str(?company), \"2021\")) }",
+            "elapsed_time": 64575
+        },
+        "tokens": {
+            "prompt_tokens": 19624,
+            "completion_tokens": 773,
+            "elapsed_time_model": 56723,
+            "tokens_per_sec": 359.58703590479416
+        },
+        "git": {
+            "label": "v0.2.9",
+            "commit": "bd93e3ca1a9ff181f4bb4f52d93dcfe368105cfc"
+        },
+        "sources": [
+            "/home/dorschre/01_Projects/test/natural-language-query-answering/knowledge-graph/velektronik-graph-clean/abox-en.ttl.gz",
+            "/home/dorschre/01_Projects/test/natural-language-query-answering/knowledge-graph/velektronik-graph-clean/tbox.ttl"
+        ],
+        "client_info": {
+            "model": "llama-3.3-70b-instruct",
+            "max_tokens": 1024,
+            "temperature": 0,
+            "top_p": 1,
+            "baseuri": "https://chat-ai.academiccloud.de/v1/"
+        },
+        "platform": {
+            "node": "r11315",
+            "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+            "system": "Linux",
+            "processor": "x86_64",
+            "machine": "x86_64",
+            "physical_memory": 5.791034698486328,
+            "python_version": "3.12.9"
+        }
+    }
+}
