@@ -14,9 +14,9 @@ The agent is deployed on a semiconductor industry supply chain knowledge graph t
 
 ### Knowledge Graph and Queries
 
-The knowledge graph and evaluation queries are available in a separate repository:
-- [SupplyBench Repository](https://github.com/wintechis/supplybench)
-- The evaluation queries are all queries from the [SupplyBench Evaluation](https://github.com/wintechis/supplybench-evaluation) that are tagged as "one triple pattern", "two triple patterns", "three triple patterns", or "four triple patterns".
+The knowledge graph and evaluation queries are available in a separate repository under version v0.1:
+- [SupplyBench Repository](https://github.com/wintechis/supplybench/tree/v0.1)
+- The evaluation queries are all queries from the [SupplyBench Evaluation](https://github.com/wintechis/supplybench/blob/v0.1/query-corpus/queries.n3) that are tagged as "one triple pattern", "two triple patterns", "three triple patterns", or "four triple patterns".
 
 ### Project Structure
 
